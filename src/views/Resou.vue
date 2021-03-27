@@ -59,12 +59,13 @@
       <el-table-column prop="comment" label="评论"> </el-table-column>
       <el-table-column prop="like" label="点赞"> </el-table-column>
       <el-table-column prop="category" label="分类"> </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button
             @click="goSpread(tableData[scope.$index].title)"
-            type="text"
-            size="small"
+            type="primary"
+            size="medium"
+            round
             >内容传播</el-button
           >
         </template>
@@ -88,6 +89,7 @@ export default {
     getData() {
       if (!this.date || !this.time) {
         this.$alert("日期或时间未选择");
+        return;
       }
       this.loading = true;
       let startTime = `${this.date} ${this.time}:00`,
@@ -102,7 +104,7 @@ export default {
       this.loading = false;
     },
     goSpread(resou) {
-      this.$router.push({ path: '/spread', query: { resou } });
+      this.$router.push({ path: "/spread", query: { resou } });
     },
   },
 };

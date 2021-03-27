@@ -19,6 +19,13 @@ export default {
   },
   async mounted() {
     let title = this.$route.query.resou;
+    console.log(title);
+    if (!title) if (!this.date || !this.time) {
+        this.$alert("请先从热搜数据页选择一条热搜", {
+          callback: () => this.$router.push('/')
+        });
+        return;
+      }
     this.query.equalTo("title", "==", title);
     await this.query.find().then((res) => {
       res.forEach((r) => {

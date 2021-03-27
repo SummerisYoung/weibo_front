@@ -20,7 +20,7 @@
           <i class="el-icon-setting"></i>
           <span slot="title">内容传播</span>
         </el-menu-item>
-        <el-menu-item index="4" @click="goPage('/')">
+        <el-menu-item index="4" @click="goPage('/Category')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容分类(仅供参考)</span>
         </el-menu-item>

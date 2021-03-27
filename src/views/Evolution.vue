@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import utils from "../utils";
 export default {
   data() {
     return {
@@ -93,21 +94,8 @@ export default {
       // 获取开始时间和结束时间
       let startTime = this.timeRange[0],
         endTime = this.timeRange[1];
-      // 查询数据库里距离开始时间最近的时间戳
-      this.query.equalTo("time", ">=", `${Date.parse(startTime) / 1000}`);
-      this.query.limit(1);
-      // 把开始时间置为该时间戳
-      await this.query.find().then((res) => {
-        startTime = Number(res[0].time);
-      });
-
-      // 查询数据库里距离结束时间最近的时间戳，使用>=来包括该时间
-      this.query.equalTo("time", ">=", `${Date.parse(endTime) / 1000}`);
-      this.query.limit(1);
-      // 把结束时间置为该时间戳
-      await this.query.find().then((res) => {
-        endTime = Number(res[0].time);
-      });
+      // 获取范围内的开始时间戳和结束时间戳
+      [startTime, endTime] = await utils.dateRange(startTime, endTime, this.query);
 
       // 临时数据数组
       let resData = {};
@@ -117,7 +105,7 @@ export default {
         // 获取字符型时间
         let timestamp = `${startTime}`;
         // 保存所有时间作为日期标题
-        this.dataOri[0].push(this.dateFormat(timestamp));
+        this.dataOri[0].push(utils.dateFormat(timestamp));
         // 去掉最后一位
         let temp = timestamp.substring(0, timestamp.length - 1);
         // 在数据库里，时间戳最后一位可能是2或3，所以制造数组
@@ -137,8 +125,9 @@ export default {
               lastValue: resData[r.title]
                 ? resData[r.title][resData[r.title].length - 1]
                 : 0,
-              date: this.dateFormat(timestamp),
+              date: utils.dateFormat(timestamp),
               color: this.randomRgbColor(),
+              category: r.category,
             });
             // 保存一个热搜热度map
             if (resData[r.title]) {
@@ -164,47 +153,6 @@ export default {
       const g = Math.floor(Math.random() * 256);
       const b = Math.floor(Math.random() * 256);
       return `rgb(${r},${g},${b})`;
-    },
-    // 时间戳转换成指定格式日期
-    dateFormat(timestamp, formats) {
-      // formats格式包括
-      // 1. Y-m-d
-      // 2. Y-m-d H:i:s
-      // 3. Y年m月d日
-      // 4. Y年m月d日 H时i分
-      formats = formats || "Y-m-d H:i";
-
-      let zero = function (value) {
-        if (value < 10) {
-          return "0" + value;
-        }
-        return value;
-      };
-
-      // 格式化传入的时间戳
-      timestamp =
-        timestamp.length < 13 ? Number(timestamp + "000") : Number(timestamp);
-
-      let myDate = timestamp ? new Date(timestamp) : new Date();
-
-      let year = myDate.getFullYear();
-      let month = zero(myDate.getMonth() + 1);
-      let day = zero(myDate.getDate());
-
-      let hour = zero(myDate.getHours());
-      let minite = zero(myDate.getMinutes());
-      let second = zero(myDate.getSeconds());
-
-      return formats.replace(/Y|m|d|H|i|s/gi, function (matches) {
-        return {
-          Y: year,
-          m: month,
-          d: day,
-          H: hour,
-          i: minite,
-          s: second,
-        }[matches];
-      });
     },
     // 截取当天数据
     sliceData() {
@@ -323,6 +271,13 @@ export default {
 
       barsEnter
         .append("text")
+        .classed("category", true)
+        .text((d) => d.category)
+        .attr("x", (d) => this.scale(d.value) / 2.5)
+        .attr("y", this.barPadding);
+
+      barsEnter
+        .append("text")
         .classed("value", true)
         .text((d) => d.value)
         .attr("x", (d) => this.scale(d.value) + 10)
@@ -351,6 +306,13 @@ export default {
           const i = that.d3.interpolateRound(d.lastValue, d.value);
           return (t) => (textDom.textContent = i(t));
         });
+
+      bars
+        .select("text.category")
+        .transition()
+        .duration(this.duration)
+        .ease(this.d3.easeLinear)
+        .attr("x", (d) => this.scale(d.value) / 2.5);
 
       // 退出模式
       bars

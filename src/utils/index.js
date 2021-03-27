@@ -39,5 +39,24 @@ export default {
                 s: second,
             }[matches];
         });
+    },
+    // 根据给定时间获取数据库内该时间范围内的开始时间戳和结束时间戳
+    dateRange: async function (startTime, endTime, query) {
+        // 查询数据库里距离开始时间最近的时间戳
+        query.equalTo("time", ">=", `${Date.parse(startTime) / 1000}`);
+        query.limit(1);
+        // 把开始时间置为该时间戳
+        await query.find().then((res) => {
+            startTime = Number(res[0].time);
+        });
+
+        // 查询数据库里距离结束时间最近的时间戳，使用>=来包括该时间
+        query.equalTo("time", ">=", `${Date.parse(endTime) / 1000}`);
+        query.limit(1);
+        // 把结束时间置为该时间戳
+        await query.find().then((res) => {
+            endTime = Number(res[0].time);
+        });
+        return [startTime, endTime]
     }
 }

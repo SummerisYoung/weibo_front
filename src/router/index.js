@@ -18,6 +18,11 @@ const routes = [
         path: '/spread',
         name: 'spread',
         component: () => import(/* webpackChunkName: "about" */ '../views/Spread.vue')
+    },
+    {
+        path: '/category',
+        name: 'category',
+        component: () => import(/* webpackChunkName: "about" */ '../views/Category.vue')
     }
 ]
 

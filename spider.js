@@ -2,6 +2,33 @@ const http = require("http");
 const url = require("url");
 const cheerio = require("cheerio");
 const superagent = require("superagent");
+
+/**
+ * 爬取微博链接里的微博id
+ * @param {*} url 微博链接
+ * @returns 
+ */
+function getId (url) {
+  return new Promise((resolve, reject) => {
+    superagent
+    .get(url)
+    .set({
+      "user-agent": "Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)"
+    })
+    .end((err, res) => {
+      if (err) reject(err);
+      const $ = cheerio.load(res.text)
+      const mid = $(".WB_cardwrap.WB_feed_type").attr('mid')
+      resolve(mid)
+    })
+  });
+}
+
+/**
+ * 抓取转发关系,每一代限三条
+ * @param {*} id 抓取请求的id
+ * @returns 
+ */
 function getReposts(id) {
   return new Promise((resolve, reject) => {
     superagent
@@ -39,27 +66,22 @@ function getReposts(id) {
 }
 
 const server = http
-  .createServer(function (req, res) {
+  .createServer(async function (req, res) {
+    // 解析get请求传入的参数
     const obj = url.parse(req.url, true);
-    console.info(obj.query.id);
 
+    // 确认请求路径,排除icon请求
     if (obj.pathname === "/") {
-      getReposts(`${obj.query.id}`)
-        .then((repost) => {
-          console.info("啊啊", repost);
-          res.writeHeader(200, {
-            "Content-Type": "application/json",
-          });
-
-          res.end(JSON.stringify(repost));
-        })
-        .catch(() => {
-          res.writeHeader(200, {
-            "Content-Type": "text/plain; charset=utf-8",
-          });
-
-          res.end("出错了");
-        });
+      // 拿到微博id
+      const id = await getId(obj.query.link)
+      // 拿到转发结果
+      const repost = await getReposts(id)
+      // 设置返回格式
+      res.writeHeader(200, {
+        "Content-Type": "application/json",
+      });
+      // 返回数据
+      res.end(JSON.stringify(repost));
     }
   })
   .listen(8080);

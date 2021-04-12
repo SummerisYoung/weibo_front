@@ -1,3 +1,5 @@
+const http = require("http");
+const url = require("url");
 const cheerio = require("cheerio");
 const superagent = require("superagent");
 function getReposts(id) {
@@ -10,28 +12,54 @@ function getReposts(id) {
       })
       .end(async (err, res) => {
         if (err) reject(err);
-        const $ = cheerio.load(JSON.parse(res.text).data.html);
-        const repost = [];
-        const elements = $(".list_li.S_line1.clearfix");
-        for (const el of elements.slice(0, 2)) {
-          const mid = $(el).attr("mid");
-          const content = $(el).find(".list_con .WB_text").text();
-          const time = $(el)
-            .find(".list_con .WB_from.S_txt2 a")
-            .attr("title");
-          const children = await getReposts(mid)
-          repost.push({
-            mid,
-            content,
-            time,
-            children
-          });
+        try {
+          const text = JSON.parse(res.text)
+          const $ = cheerio.load(text.data.html);
+          const repost = [];
+          const elements = $(".list_li.S_line1.clearfix");
+          for (const el of elements.slice(0, 3)) {
+            const mid = $(el).attr("mid");
+            const content = $(el).find(".list_con .WB_text").text();
+            const time = $(el).find(".list_con .WB_from.S_txt2 a").attr("title");
+            const children = await getReposts(mid);
+            console.info(children);
+            repost.push({
+              mid,
+              content,
+              time,
+              children,
+            });
+          }
+          resolve(repost);
+        }catch(error) {
+          reject(error.message)
         }
-        resolve(repost);
       });
   });
 }
 
-const reposts = getReposts("4623254876062991").then((res) => {
-  console.info(res);
-});
+const server = http
+  .createServer(function (req, res) {
+    const obj = url.parse(req.url, true);
+    console.info(obj.query.id);
+
+    if (obj.pathname === "/") {
+      getReposts(`${obj.query.id}`)
+        .then((repost) => {
+          console.info("啊啊", repost);
+          res.writeHeader(200, {
+            "Content-Type": "application/json",
+          });
+
+          res.end(JSON.stringify(repost));
+        })
+        .catch(() => {
+          res.writeHeader(200, {
+            "Content-Type": "text/plain; charset=utf-8",
+          });
+
+          res.end("出错了");
+        });
+    }
+  })
+  .listen(8080);

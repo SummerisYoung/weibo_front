@@ -2,29 +2,29 @@
   <div id="app">
     <div class="sidebar">
       <el-menu
-        default-active="1"
+        :default-active="$route.path"
         class="el-menu-vertical-demo"
         background-color="#304156"
         text-color="rgb(191, 203, 217)"
         active-text-color="#409EFF"
       >
-        <el-menu-item index="1" @click="goPage('/')">
+        <el-menu-item index="/" @click="goPage('/')">
           <i class="el-icon-setting"></i>
           <span slot="title">热搜数据</span>
         </el-menu-item>
-        <el-menu-item index="2" @click="goPage('/evolution')">
+        <el-menu-item index="/evolution" @click="goPage('/evolution')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容演化</span>
         </el-menu-item>
-        <el-menu-item index="3" @click="goPage('/spread')">
+        <el-menu-item index="/spread" @click="goPage('/spread')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容传播</span>
         </el-menu-item>
-        <el-menu-item index="4" @click="goPage('/repost')">
+        <el-menu-item index="/repost" @click="goPage('/repost')">
           <i class="el-icon-setting"></i>
-          <span slot="title">内容传播——转发关系</span>
+          <span slot="title">内容转发</span>
         </el-menu-item>
-        <el-menu-item index="5" @click="goPage('/Category')">
+        <el-menu-item index="/Category" @click="goPage('/Category')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容分类——仅供参考</span>
         </el-menu-item>

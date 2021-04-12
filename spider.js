@@ -46,7 +46,7 @@ function getReposts(id) {
           const $ = cheerio.load(text.data.html);
           const repost = [];
           const elements = $(".list_li.S_line1.clearfix");
-          for (const el of elements.slice(0, 1)) {
+          for (const el of elements.slice(0, 3)) {
             const mid = $(el).attr("mid");
             const content = $(el)
               .find(".list_con .WB_text")

@@ -38,16 +38,11 @@ export default {
         }
 
         myChart.setOption({
-          tooltip: {
-            trigger: 'item',
-            triggerOn: 'mousemove'
-          },
           series: [
             {
               type: 'tree',
 
               data: [data],
-              width: 500,
               top: '1%',
               left: '20%',
               bottom: '1%',
@@ -56,18 +51,27 @@ export default {
               symbolSize: 7,
 
               label: {
-                  position: 'left',
-                  verticalAlign: 'middle',
-                  align: 'right',
-                  fontSize: 9
+                position: 'left',
+                verticalAlign: 'middle',
+                align: 'right',
+                fontSize: 9,
+                normal: {
+                  formatter(v) {
+                    let text = v.name;
+                    for(let i = 16;i < text.length;i += 16) {
+                      text = text.slice(0,i) + '\n' + text.slice(i)
+                    }
+                    return text
+                  },
+                }
               },
 
               leaves: {
-                  label: {
-                      position: 'right',
-                      verticalAlign: 'middle',
-                      align: 'left'
-                  }
+                label: {
+                    position: 'right',
+                    verticalAlign: 'middle',
+                    align: 'left'
+                }
               },
 
               emphasis: {

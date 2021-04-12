@@ -20,9 +20,13 @@
           <i class="el-icon-setting"></i>
           <span slot="title">内容传播</span>
         </el-menu-item>
-        <el-menu-item index="4" @click="goPage('/Category')">
+        <el-menu-item index="4" @click="goPage('/repost')">
           <i class="el-icon-setting"></i>
-          <span slot="title">内容分类(仅供参考)</span>
+          <span slot="title">内容传播——转发关系</span>
+        </el-menu-item>
+        <el-menu-item index="5" @click="goPage('/Category')">
+          <i class="el-icon-setting"></i>
+          <span slot="title">内容分类——仅供参考</span>
         </el-menu-item>
       </el-menu>
     </div>

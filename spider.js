@@ -6,28 +6,30 @@ const superagent = require("superagent");
 /**
  * 爬取微博链接里的微博id
  * @param {*} url 微博链接
- * @returns 
+ * @returns
  */
-function getId (url) {
+function getId(url) {
   return new Promise((resolve, reject) => {
     superagent
-    .get(url)
-    .set({
-      "user-agent": "Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)"
-    })
-    .end((err, res) => {
-      if (err) reject(err);
-      const $ = cheerio.load(res.text)
-      const mid = $(".WB_cardwrap.WB_feed_type").attr('mid')
-      resolve(mid)
-    })
+      .get(url)
+      .set({
+        "user-agent":
+          "Mozilla/5.0 (compatible; Baiduspider-render/2.0; +http://www.baidu.com/search/spider.html)",
+      })
+      .end((err, res) => {
+        if (err) reject(err);
+        const $ = cheerio.load(res.text);
+        const id = $(".WB_cardwrap.WB_feed_type").attr("mid");
+        const time = $(".WB_from.S_txt2 a.S_txt2").attr("title");
+        resolve({ id, time });
+      });
   });
 }
 
 /**
  * 抓取转发关系,每一代限三条
  * @param {*} id 抓取请求的id
- * @returns 
+ * @returns
  */
 function getReposts(id) {
   return new Promise((resolve, reject) => {
@@ -40,48 +42,56 @@ function getReposts(id) {
       .end(async (err, res) => {
         if (err) reject(err);
         try {
-          const text = JSON.parse(res.text)
+          const text = JSON.parse(res.text);
           const $ = cheerio.load(text.data.html);
           const repost = [];
           const elements = $(".list_li.S_line1.clearfix");
-          for (const el of elements.slice(0, 3)) {
+          for (const el of elements.slice(0, 1)) {
             const mid = $(el).attr("mid");
-            const content = $(el).find(".list_con .WB_text").text();
-            const time = $(el).find(".list_con .WB_from.S_txt2 a").attr("title");
+            const content = $(el)
+              .find(".list_con .WB_text")
+              .text();
+            const time = $(el)
+              .find(".list_con .WB_from.S_txt2 a")
+              .attr("title");
+            const name = `${time}\n${content}`;
             const children = await getReposts(mid);
             console.info(children);
             repost.push({
-              mid,
-              content,
-              time,
+              name,
               children,
             });
           }
           resolve(repost);
-        }catch(error) {
-          reject(error.message)
+        } catch (error) {
+          reject(error.message);
         }
       });
   });
 }
 
 const server = http
-  .createServer(async function (req, res) {
+  .createServer(async function(req, res) {
     // 解析get请求传入的参数
     const obj = url.parse(req.url, true);
 
     // 确认请求路径,排除icon请求
     if (obj.pathname === "/") {
       // 拿到微博id
-      const id = await getId(obj.query.link)
+      const { id, time } = await getId(obj.query.link);
       // 拿到转发结果
-      const repost = await getReposts(id)
+      const children = await getReposts(id);
       // 设置返回格式
       res.writeHeader(200, {
         "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
       });
+      const response = {
+        time,
+        children,
+      };
       // 返回数据
-      res.end(JSON.stringify(repost));
+      res.end(JSON.stringify(response));
     }
   })
-  .listen(8080);
+  .listen(8000);

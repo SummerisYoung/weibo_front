@@ -59,7 +59,7 @@
       <el-table-column prop="comment" label="评论"> </el-table-column>
       <el-table-column prop="like" label="点赞"> </el-table-column>
       <el-table-column prop="category" label="分类"> </el-table-column>
-      <el-table-column fixed="right" label="操作" width="120">
+      <el-table-column fixed="right" label="操作" width="230">
         <template slot-scope="scope">
           <el-button
             @click="goSpread(tableData[scope.$index].title)"
@@ -67,6 +67,13 @@
             size="medium"
             round
             >内容传播</el-button
+          >
+          <el-button
+            @click="goRepost(tableData[scope.$index].link, tableData[scope.$index].title)"
+            type="primary"
+            size="medium"
+            round
+            >内容转发</el-button
           >
         </template>
       </el-table-column>
@@ -106,6 +113,9 @@ export default {
     goSpread(resou) {
       this.$router.push({ path: "/spread", query: { resou } });
     },
+    goRepost(link, title) {
+      this.$router.push({ path: "/repost", query: { link, title } });
+    }
   },
 };
 </script>

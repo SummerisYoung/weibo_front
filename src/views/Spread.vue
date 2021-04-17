@@ -1,5 +1,10 @@
 <template>
-  <div class="echarts" ref="echarts"></div>
+  <div class="spread">
+    <div class="echarts" ref="echarts"></div>
+    <ul class="spread-data-analysis" v-if="rates.length">
+      <li v-for="(rate, index) in rates" :key="index" v-html="rate"></li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -12,20 +17,22 @@ export default {
         repost: [],
         comment: [],
         like: [],
+        rank: [],
       },
+      rates: [],
       category: [],
       query: this.Bmob.Query("weibo"),
     };
   },
   async mounted() {
     let title = this.$route.query.resou;
-    console.log(title);
-    if (!title) if (!this.date || !this.time) {
-      this.$alert("请先从热搜数据页选择一条热搜", {
-        callback: () => this.$router.push('/')
-      });
-      return;
-    }
+    if (!title)
+      if (!this.date || !this.time) {
+        this.$alert("请先从热搜数据页选择一条热搜", {
+          callback: () => this.$router.push("/"),
+        });
+        return;
+      }
     this.query.equalTo("title", "==", title);
     await this.query.find().then((res) => {
       res.forEach((r) => {
@@ -33,6 +40,7 @@ export default {
         this.data.repost.push(r.repost);
         this.data.comment.push(r.comment);
         this.data.like.push(r.like);
+        this.data.rank.push(r.rank);
       });
     });
 
@@ -46,7 +54,7 @@ export default {
         trigger: "axis",
       },
       legend: {
-        data: ["邮件营销", "联盟广告", "视频广告", "直接访问", "搜索引擎"],
+        data: ["点赞", "转发", "评论", "排名"],
       },
       grid: {
         left: "3%",
@@ -85,15 +93,59 @@ export default {
           type: "line",
           smooth: true,
         },
+        {
+          name: "排名",
+          data: this.data.rank,
+          type: "line",
+          smooth: true,
+        },
       ],
     });
+
+    // 数据分析文案
+    this.dataAnalysis();
+  },
+  methods: {
+    dataAnalysis() {
+      for (let i = 0; i < this.data.like.length - 1; i++) {
+        let rate =
+          (this.data.like[i + 1] - this.data.like[i]) / this.data.like[i];
+        rate = (rate * 100).toFixed(2);
+        let text = `<span class='blue-text'>${this.category[i].slice(
+          5
+        )}</span> --
+        <span class='blue-text'>${this.category[i + 1].slice(
+          5
+        )}</span>点赞增长速率为
+        <span class='green-text'>${rate}%</span>，排名变化为
+        <span class='red-text'>${
+          this.data.rank[i]
+        }</span>--<span class='red-text'>${this.data.rank[i + 1]}</span>
+        `;
+        this.rates.push(text);
+      }
+    },
   },
 };
 </script>
 
-<style lang="less" scoped>
-.echarts {
-  width: 100%;
+<style lang="less">
+.spread {
   height: 100%;
+  display: flex;
+}
+.spread-data-analysis {
+  height: 80%;
+  padding: 20px;
+  overflow-y: scroll;
+
+  span {
+    line-height: 30px;
+  }
+}
+.echarts {
+  padding: 40px;
+  width: 70%;
+  height: 80%;
 }
 </style>

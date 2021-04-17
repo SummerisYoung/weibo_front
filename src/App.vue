@@ -14,7 +14,7 @@
         </el-menu-item>
         <el-menu-item index="/evolution" @click="goPage('/evolution')">
           <i class="el-icon-setting"></i>
-          <span slot="title">内容演化</span>
+          <span slot="title">内容演化——动态变化</span>
         </el-menu-item>
         <el-menu-item index="/Category" @click="goPage('/Category')">
           <i class="el-icon-setting"></i>
@@ -22,11 +22,11 @@
         </el-menu-item>
         <el-menu-item index="/spread" @click="goPage('/spread')">
           <i class="el-icon-setting"></i>
-          <span slot="title">内容传播</span>
+          <span slot="title">内容传播——横向分析</span>
         </el-menu-item>
         <el-menu-item index="/repost" @click="goPage('/repost')">
           <i class="el-icon-setting"></i>
-          <span slot="title">内容转发</span>
+          <span slot="title">内容传播——纵向分析</span>
         </el-menu-item>
       </el-menu>
     </div>
@@ -70,5 +70,15 @@ body {
     box-sizing: border-box;
     overflow: hidden;
   }
+}
+
+.blue-text {
+  color: #409eff;
+}
+.green-text {
+  color: #67c23a;
+}
+.red-text {
+  color: #f56c6c;
 }
 </style>

@@ -286,15 +286,6 @@ export default {
     word-break: keep-all;
   }
 }
-.blue-text {
-  color: #409eff;
-}
-.green-text {
-  color: #67c23a;
-}
-.red-text {
-  color: #f56c6c;
-}
 .el-link {
   vertical-align: initial;
   font-size: 16px;

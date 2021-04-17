@@ -35,7 +35,6 @@
         <template slot-scope="scope">
           <el-link
             type="primary"
-            class="resou-url"
             :href="tableData[scope.$index].url"
             target="_blank"
             >{{ tableData[scope.$index].title }}</el-link
@@ -47,7 +46,6 @@
         <template slot-scope="scope">
           <el-link
             type="info"
-            class="resou-url"
             :href="tableData[scope.$index].link"
             target="_blank"
             >{{ tableData[scope.$index].content }}</el-link
@@ -69,7 +67,14 @@
             >内容传播</el-button
           >
           <el-button
-            @click="goRepost(tableData[scope.$index].link, tableData[scope.$index].title)"
+            @click="
+              goRepost(
+                tableData[scope.$index].link,
+                tableData[scope.$index].title,
+                tableData[scope.$index].content,
+                tableData[scope.$index].url
+              )
+            "
             type="primary"
             size="medium"
             round
@@ -113,9 +118,12 @@ export default {
     goSpread(resou) {
       this.$router.push({ path: "/spread", query: { resou } });
     },
-    goRepost(link, title) {
-      this.$router.push({ path: "/repost", query: { link, title } });
-    }
+    goRepost(link, title, content, url) {
+      this.$router.push({
+        path: "/repost",
+        query: { link, title, content, url },
+      });
+    },
   },
 };
 </script>

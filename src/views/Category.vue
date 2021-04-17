@@ -46,6 +46,7 @@ export default {
       // 开启loading
       this.loading = true;
 
+      // 日期范围不完整要报错
       if (this.timeRange.length < 2) {
         this.$alert("日期范围不完整");
       }
@@ -101,11 +102,14 @@ export default {
       this.loading = false;
     },
     drawChart() {
+      // 取到页面里的绘图节点
       let myChart = echarts.init(document.getElementsByClassName("echarts")[0]);
 
+      // 格式化开始时间和结束时间
       let startTime = utils.dateFormat(Date.parse(this.timeRange[0]) / 1000),
         endTime = utils.dateFormat(Date.parse(this.timeRange[1]) / 1000);
 
+      // 图表配置，详见echarts官网
       myChart.setOption({
         title: {
           text: `${startTime}至${endTime}全部热搜数据分类统计`,

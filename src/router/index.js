@@ -23,11 +23,6 @@ const routes = [
         path: '/category',
         name: 'category',
         component: () => import(/* webpackChunkName: "about" */ '../views/Category.vue')
-    },
-    {
-        path: '/repost',
-        name: 'repost',
-        component: () => import(/* webpackChunkName: "about" */ '../views/Repost.vue')
     }
 ]
 

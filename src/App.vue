@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- 左边的菜单栏 -->
     <div class="sidebar">
       <el-menu
         :default-active="$route.path"
@@ -20,16 +21,13 @@
           <i class="el-icon-setting"></i>
           <span slot="title">内容传播</span>
         </el-menu-item>
-        <el-menu-item index="/repost" @click="goPage('/repost')">
-          <i class="el-icon-setting"></i>
-          <span slot="title">内容转发</span>
-        </el-menu-item>
         <el-menu-item index="/Category" @click="goPage('/Category')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容分类——仅供参考</span>
         </el-menu-item>
       </el-menu>
     </div>
+    <!-- 右边展示内容的部分 -->
     <div class="main-container">
       <router-view></router-view>
     </div>
@@ -40,6 +38,7 @@
 export default {
   name: "App",
   methods: {
+    // 跳转页面
     goPage(url) {
       this.$router.push({ path: url });
     },

@@ -1,5 +1,6 @@
 <template>
   <div style="padding: 40px">
+    <!-- 表格展示数据库里的数据 -->
     <div>
       <el-date-picker
         v-model="date"
@@ -59,7 +60,7 @@
       <el-table-column prop="comment" label="评论"> </el-table-column>
       <el-table-column prop="like" label="点赞"> </el-table-column>
       <el-table-column prop="category" label="分类"> </el-table-column>
-      <el-table-column fixed="right" label="操作" width="230">
+      <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
           <el-button
             @click="goSpread(tableData[scope.$index].title)"
@@ -67,13 +68,6 @@
             size="medium"
             round
             >内容传播</el-button
-          >
-          <el-button
-            @click="goRepost(tableData[scope.$index].link, tableData[scope.$index].title)"
-            type="primary"
-            size="medium"
-            round
-            >内容转发</el-button
           >
         </template>
       </el-table-column>
@@ -94,27 +88,31 @@ export default {
   },
   methods: {
     getData() {
+      // 没选日期或时间就不再执行下面的代码
       if (!this.date || !this.time) {
         this.$alert("日期或时间未选择");
         return;
       }
+      // 加载loading
       this.loading = true;
+      // 获取开始时间和结束时间
       let startTime = `${this.date} ${this.time}:00`,
         endTime = `${this.date} ${
           this.time.substring(0, this.time.length - 1) + 5
         }:00`;
+      // 数据库查询，要取时间范围在开始时间和结束时间之间的数据
       this.query.equalTo("createdAt", ">", startTime);
       this.query.equalTo("createdAt", "<", endTime);
+      // 查询数据库
       this.query.find().then((res) => {
         this.tableData = res;
       });
+      // 关闭loading
       this.loading = false;
     },
+    // 跳转到内容传播页面
     goSpread(resou) {
       this.$router.push({ path: "/spread", query: { resou } });
-    },
-    goRepost(link, title) {
-      this.$router.push({ path: "/repost", query: { link, title } });
     }
   },
 };

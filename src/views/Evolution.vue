@@ -23,6 +23,7 @@
         >查询</el-button
       >
     </div>
+    <!-- 图表节点 -->
     <div ref="chart"></div>
   </div>
 </template>

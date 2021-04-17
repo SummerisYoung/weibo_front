@@ -22,6 +22,14 @@
         @click="getRangeData()"
         >查询</el-button
       >
+      <el-button
+        v-if="svg"
+        style="margin-left: 20px"
+        type="primary"
+        round
+        @click="goCategory()"
+        >前往数据分析</el-button
+      >
     </div>
     <div ref="chart"></div>
   </div>
@@ -368,6 +376,14 @@ export default {
         return (this.barHeight + this.barPadding) * (this.count + 1);
       }
     },
+    // 跳转数据分析页面
+    goCategory() {
+      console.info(this.timeRange)
+      this.$router.push({
+        path: "/category",
+        query: { timeRange: [this.timeRange[0].getTime(),this.timeRange[1].getTime()] },
+      });
+    }
   },
 };
 </script>

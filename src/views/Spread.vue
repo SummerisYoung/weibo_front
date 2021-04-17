@@ -1,9 +1,18 @@
 <template>
   <div class="spread">
     <div class="echarts" ref="echarts"></div>
-    <ul class="spread-data-analysis" v-if="rates.length">
-      <li v-for="(rate, index) in rates" :key="index" v-html="rate"></li>
-    </ul>
+    <div v-if="rates.length" style="margin-top: 10px">
+      <el-button
+        style="margin-left: 20px"
+        type="primary"
+        round
+        @click="goRepost()"
+        >前往纵向分析</el-button
+      >
+      <ul class="spread-data-analysis">
+        <li v-for="(rate, index) in rates" :key="index" v-html="rate"></li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -13,6 +22,7 @@ import utils from "../utils";
 export default {
   data() {
     return {
+      resou: {},
       data: {
         repost: [],
         comment: [],
@@ -35,6 +45,13 @@ export default {
       }
     this.query.equalTo("title", "==", title);
     await this.query.find().then((res) => {
+      this.resou = {
+        author: res[0].author,
+        link: res[0].link,
+        title: res[0].title,
+        content: res[0].content,
+        url: res[0].url,
+      };
       res.forEach((r) => {
         this.category.push(utils.dateFormat(r.time));
         this.data.repost.push(r.repost);
@@ -125,6 +142,13 @@ export default {
         this.rates.push(text);
       }
     },
+    // 跳转纵向分析页面
+    goRepost() {
+      this.$router.push({
+        path: "/repost",
+        query: { ...this.resou },
+      });
+    },
   },
 };
 </script>
@@ -136,7 +160,8 @@ export default {
 }
 .spread-data-analysis {
   height: 80%;
-  padding: 20px;
+  margin-top: 10px;
+  padding: 0 20px 20px 20px;
   overflow-y: scroll;
 
   span {

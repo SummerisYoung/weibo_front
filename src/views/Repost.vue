@@ -29,6 +29,7 @@ export default {
   mounted() {
     const link = this.$route.query.link;
     const content = this.$route.query.content;
+    const author = this.$route.query.author;
     if (!link) {
       this.$alert("请先从热搜数据页选择一条热搜", {
         callback: () => this.$router.push("/"),
@@ -40,7 +41,7 @@ export default {
     this.$axios("http://localhost:8000/?link=" + link)
       .then((res) => {
         const data = {
-          name: `${res.data.time}\n${content}`,
+          name: `${res.data.time}\n${author}：${content}`,
           data: res.data.data,
           children: res.data.children,
         };

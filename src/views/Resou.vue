@@ -72,7 +72,8 @@
                 tableData[scope.$index].link,
                 tableData[scope.$index].title,
                 tableData[scope.$index].content,
-                tableData[scope.$index].url
+                tableData[scope.$index].url,
+                tableData[scope.$index].author
               )
             "
             type="primary"
@@ -118,10 +119,10 @@ export default {
     goSpread(resou) {
       this.$router.push({ path: "/spread", query: { resou } });
     },
-    goRepost(link, title, content, url) {
+    goRepost(link, title, content, url, author) {
       this.$router.push({
         path: "/repost",
-        query: { link, title, content, url },
+        query: { link, title, content, url, author },
       });
     },
   },

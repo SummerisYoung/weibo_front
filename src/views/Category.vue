@@ -82,6 +82,14 @@ export default {
       total: 0,
     };
   },
+  mounted() {
+    if (this.$route.query.timeRange) {
+      this.timeRange = this.$route.query.timeRange.map(
+        (t) => new Date(Number(t))
+      );
+      this.getData();
+    }
+  },
   methods: {
     // 获取数据
     async getData() {

@@ -16,6 +16,10 @@
           <i class="el-icon-setting"></i>
           <span slot="title">内容演化</span>
         </el-menu-item>
+        <el-menu-item index="/Category" @click="goPage('/Category')">
+          <i class="el-icon-setting"></i>
+          <span slot="title">内容演化——数据分析</span>
+        </el-menu-item>
         <el-menu-item index="/spread" @click="goPage('/spread')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容传播</span>
@@ -23,10 +27,6 @@
         <el-menu-item index="/repost" @click="goPage('/repost')">
           <i class="el-icon-setting"></i>
           <span slot="title">内容转发</span>
-        </el-menu-item>
-        <el-menu-item index="/Category" @click="goPage('/Category')">
-          <i class="el-icon-setting"></i>
-          <span slot="title">内容分类——仅供参考</span>
         </el-menu-item>
       </el-menu>
     </div>

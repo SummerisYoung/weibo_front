@@ -106,8 +106,8 @@ export default {
       let myChart = echarts.init(document.getElementsByClassName("echarts")[0]);
 
       // 格式化开始时间和结束时间
-      let startTime = utils.dateFormat(Date.parse(this.timeRange[0]) / 1000),
-        endTime = utils.dateFormat(Date.parse(this.timeRange[1]) / 1000);
+      let startTime = utils.dateFormat(Date.parse(this.timeRange[0])),
+        endTime = utils.dateFormat(Date.parse(this.timeRange[1]));
 
       // 图表配置，详见echarts官网
       myChart.setOption({
